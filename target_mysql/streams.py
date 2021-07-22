@@ -232,10 +232,10 @@ class MSSQLStream(Stream):
           logging.info(f"Running batch with SQL: {self.dml_sql} . Batch size: {len(self.batch_cache)}")
           self.commit_batched_data(self.dml_sql, self.batch_cache)
       #We are good to go, drop table if it exists
-      sql = f"DROP TABLE IF EXISTS {self.full_table_name}"
+      sql = f"CREATE TABLE IF NOT EXISTS {self.full_table_name} LIKE {self.temp_full_table_name}"
       self.sql_runner(sql)
       #Rename our temp table to the correct table
-      sql = f"RENAME TABLE {self.temp_full_table_name} TO {self.full_table_name}"
+      sql = f"REPLACE INTO {self.full_table_name} SELECT * FROM {self.temp_full_table_name}"
       self.sql_runner(sql)
       #Remove temp table
       sql = f"DROP TABLE IF EXISTS {self.temp_full_table_name}"
