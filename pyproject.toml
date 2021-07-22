@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "target-mssql"
+name = "target-mysql"
 version = "0.0.1"
-description = "`target-mssql` is Singer tap for MSSQL, built with the Singer SDK."
-authors = ["Derek Visch"]
+description = "`target-mysql` is Singer tap for MySQL, built with the Singer SDK."
+authors = ["Keith Siilats", "Derek Visch"]
 license = "MIT"
 
 [tool.poetry.dependencies]
@@ -24,4 +24,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 # CLI declaration
-target-mssql = 'target_mssql.target:cli'
+target-mysql = 'target_mysql.target:cli'

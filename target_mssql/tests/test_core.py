@@ -9,10 +9,12 @@ from target_mssql.target import TargetMSSQL
 SAMPLE_CONFIG = {
   "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
   "host": "localhost",
-  "port": 1521,
-  "database": "temp_db",
-  "user": "sa",
-  "password": "SAsa12345678!"
+  "port": 3306,
+  "database": "test",
+  "user": "root",
+  "password": "root",
+  "batch_size": 1
+
 }
 
 
@@ -29,7 +31,7 @@ SAMPLE_CONFIG = {
 # TODO: State of MSSQL database does need to be handled before going too far here
 def testdata_to_mssql(source_data):
   target = TargetMSSQL(config=SAMPLE_CONFIG)
-  target.process_messages(source_data); #test data
+  target.process_messages(source_data.splitlines()); #test data
 
 @pytest.fixture
 def source_data():

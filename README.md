@@ -1,6 +1,72 @@
-# target-mssql
+# target-mysql
 
-`target-mssql` is a Singer tap for MSSQL.
+`target-mysql` is a Singer tap for MySQL based on the code from MSSQL target and ODBC.
+I only have it tested for mariadb on mac
+1. brew install mariadb
+2. brew services list
+3. brew start mariadb
+4. recommend changing root password to root (empty pw is not supported well)
+5. recommend testing your connection in pycharm
+6. Download 
+   * https://downloads.mariadb.org/connector-odbc/
+   * https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.13/mariadb-connector-odbc-3.1.13-osx-x86_64.pkg
+   * https://mariadb.com/kb/en/creating-a-data-source-with-mariadb-connectorodbc/#creating-a-data-source-with-mariadb-connectorodbc-on-mac-os-x
+   * http://www.iodbc.org/dataspace/doc/iodbc/wiki/iodbcWiki/Downloads#Mac%20OS%20X
+   * Dont download the obvious:
+https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-macOS11.dmg/download
+   * But download this one w the GUI:
+http://download3.openlinksw.com/uda/components/7.0/universal-apple-macosx10.7-32/mxkozzzz.dmg
+   * ODBC config is a mess, there are several .ini files with confusing names, driver names have 
+   sometimes Unicode in them sometimes not, there are several dylib files that are not
+     in standard paths etc. Try this link https://snowflakecommunity.force.com/s/article/How-to-configure-Excel-on-MacOS-to-use-Snowflake-using-ODBC-driver
+     https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md
+     http://www.odbcmanager.net/
+     /usr/local/iODBC/bin/iodbctest "DSN=MariaDB-server"
+https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Mac-OSX
+     https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-MySQL
+  
+  https://github.com/davidski/database_connections
+https://towardsdatascience.com/using-odbc-to-connect-any-database-directly-to-jupyter-notebook-19741b4b748
+  
+   `vi /Library/ODBC/odbc.ini`
+     
+```
+[ODBC Data Sources]  
+CData SSAS Sys = CData ODBC Driver for SQL Server Analysis Services   
+MariaDB-server = MariaDB ODBC 3.1 Driver
+```
+then add
+```
+[MariaDB-server]
+Description = MariaDB server
+Driver = /Library/MariaDB/MariaDB-Connector-ODBC/libmaodbc.dylib
+SERVER=localhost
+USER=root
+PASSWORD=root
+DATABASE=mysql
+PORT=3306
+```
+7. Start iodbc gui go under system dsn make sure you can test connect
+8. clone `target-mysql` to a local folder and 
+   add this to meltano.yml (or install from github and edit target)
+```
+  - name: target-mysql
+    namespace: target_mysql
+    pip_url: ../autoidm-target-mssql
+    executable: target-mssql
+    config:
+      host: localhost
+      port: 3306
+      database: face
+      user: root
+      password: root
+```
+9. run
+`meltano add --custom loader target-mysql`
+10. configure tap-posgres or another tap
+11. run
+`meltano elt tap-postgres target-mysql`
+
 
 Build with the [Singer SDK](https://gitlab.com/meltano/singer-sdk).
 
@@ -29,7 +95,7 @@ tap is available by running:
 ```
 
 ```bash
-target-mssql --about
+target-mysql --about
 ```
 
 ### Source Authentication and Authorization

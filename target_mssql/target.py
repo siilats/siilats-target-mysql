@@ -15,8 +15,10 @@ class TargetMSSQL(Target):
   def __init__(self, config, *args, **kwargs):
     super().__init__(config, *args, **kwargs)
     assert self.config["host"]
-    driver = self.config.get("driver", "{ODBC Driver 17 for SQL Server}")
-    server = self.config["host"]+ "," + str(self.config.get("port", 1433)) 
+    # print(pyodbc.drivers()) #https://towardsdatascience.com/using-odbc-to-connect-any-database-directly-to-jupyter-notebook-19741b4b748
+    driver = self.config.get("driver", "{MariaSQL}")
+    server = self.config["host"]
+    port = str(self.config.get("port", 3306))
     if (self.config.get("trusted_connection")=="yes"):
         self.conn = pyodbc.connect( driver=driver,
                                     server=server,
@@ -26,10 +28,14 @@ class TargetMSSQL(Target):
     else:
         self.conn = pyodbc.connect( driver=driver,
                                     server=server,
+                                    port=port,
                                     uid=self.config.get("user"),
                                     pwd=self.config.get("password"),
                                     database=self.config.get("database"),
                                     )
+    self.conn.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
+    self.conn.setencoding(encoding='utf-8', ctype=pyodbc.SQL_CHAR)
+    self.conn.setencoding(encoding='utf-8')
 
   #TODO not a fan of streams not being required by the BaseTarget class here, as it's referenced in the class
   def streams(self):

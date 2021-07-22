@@ -32,8 +32,8 @@ class MSSQLStream(Stream):
   def generate_full_table_name(self, streamname, schema_name):
     table_name = streamname
     table_name = streamname.replace("-","_")
-    table_name = f"[{table_name}]"
-    if schema_name: table_name = f"[{schema_name}]" + "." + table_name
+    table_name = f"`{table_name}`"
+    if schema_name: table_name = f"`{schema_name}`" + "." + table_name
     return table_name
 
   #TODO this method seems needless, should probably just call methods directly
@@ -60,7 +60,7 @@ class MSSQLStream(Stream):
     #TODO better system for detecting tables
     
     #TODO Need be using named parameters for SQL to avoid potential injection, and to be clean
-    sql = f"DROP TABLE IF EXISTS {table_name} CREATE TABLE {table_name}("
+    sql = f"CREATE OR REPLACE TABLE {table_name}("
    
     #Key Properties
     #TODO can you assume only 1 primary key?
@@ -69,7 +69,7 @@ class MSSQLStream(Stream):
       #TODO Can't assume this is an INT always
       #TODO 450 is silly
       pk_type=pk_type.replace("MAX","450") #TODO hacky hacky
-      sql += f"[{primary_key}] {pk_type} NOT NULL PRIMARY KEY,"
+      sql += f"`{primary_key}` {pk_type} NOT NULL PRIMARY KEY,"
       properties.pop(primary_key, None) #Don't add the primary key to our DDL again
 
     
@@ -81,10 +81,10 @@ class MSSQLStream(Stream):
       mssqltype=self.ddl_json_to_mssqlmapping(shape)
       self.name_type_mapping.update({name:mssqltype}) #TODO clunky for data conversation
       if(first): 
-        sql+= f" [{name}] {mssqltype}"
+        sql+= f" `{name}` {mssqltype}"
         first=False
       else: 
-        sql+= f", [{name}] {mssqltype}"
+        sql+= f", `{name}` {mssqltype}"
 
     
     sql += ");"
@@ -106,10 +106,10 @@ class MSSQLStream(Stream):
     mssqltype : str = None
     if ("string" in jsontype): 
         if(json_max_length and json_max_length < 8000 and json_description != "blob"): mssqltype = f"VARCHAR({json_max_length})" 
-        elif(json_description == "blob"): mssqltype = f"VARBINARY(max)"
+        elif(json_description == "blob"): mssqltype = f"VARBINARY(1000)"
         elif(json_format == "date-time" and json_description == "date"): mssqltype = f"Date"
         elif(json_format == "date-time"): mssqltype = f"Datetime2(7)"
-        else: mssqltype = "VARCHAR(MAX)"
+        else: mssqltype = "VARCHAR(1000)"
     elif ("number" in jsontype): 
         if (json_minimum and json_maximum and json_exclusive_minimum and json_exclusive_maximum and json_multiple_of):
             #https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql?view=sql-server-ver15
@@ -143,8 +143,8 @@ class MSSQLStream(Stream):
   #Columns is seperate due to data not necessairly having all of the correct columns
   def record_to_dml(self, table_name:str, data:dict) -> str:
     #TODO this is a bit gross, could refactor to make this easier to read
-    column_list="],[".join(data.keys())
-    sql = f"INSERT INTO {table_name} ([{column_list}])"
+    column_list="`,`".join(data.keys())
+    sql = f"INSERT INTO {table_name} (`{column_list}`)"
 
     paramaters = self.convert_data_to_params(data.values())
     sqlparameters = ",".join(paramaters)
@@ -170,7 +170,7 @@ class MSSQLStream(Stream):
   def commit_batched_data(self, dml, cache):
     try:
       self.conn.autocommit = False
-      self.cursor.fast_executemany = True 
+      self.cursor.fast_executemany = False
       self.cursor.executemany(dml, cache)
     except pyodbc.DatabaseError as e:
       logging.error(f"Caught exception while running batch sql: {dml}. ")
