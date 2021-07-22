@@ -235,7 +235,7 @@ class MSSQLStream(Stream):
       sql = f"DROP TABLE IF EXISTS {self.full_table_name}"
       self.sql_runner(sql)
       #Rename our temp table to the correct table
-      sql = f"SELECT * INTO {self.full_table_name} from {self.temp_full_table_name}"
+      sql = f"RENAME {self.temp_full_table_name} TO {self.full_table_name}"
       self.sql_runner(sql)
       #Remove temp table
       sql = f"DROP TABLE IF EXISTS {self.temp_full_table_name}"
