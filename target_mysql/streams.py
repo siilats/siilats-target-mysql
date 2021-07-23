@@ -110,7 +110,8 @@ class MSSQLStream(Stream):
         elif(json_format == "date-time" and json_description == "date"): mssqltype = f"Date"
         elif(json_format == "date-time"): mssqltype = f"Datetime"
         else: mssqltype = "VARCHAR(255)"
-    elif ("number" in jsontype): 
+    elif ("number" in jsontype): mssqltype = "INT"
+    elif ("number2" in jsontype):
         if (json_minimum and json_maximum and json_exclusive_minimum and json_exclusive_maximum and json_multiple_of):
             #https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql?view=sql-server-ver15
             #p (Precision) Total number of decimal digits
@@ -125,7 +126,7 @@ class MSSQLStream(Stream):
             mssqltype = f"NUMERIC({percision},{scale})"
         else: 
             mssqltype = "NUMERIC(19,6)" 
-    elif ("integer" in jsontype): mssqltype = "BIGINT" 
+    elif ("integer" in jsontype): mssqltype = "INT"
     elif ("boolean" in jsontype): mssqltype = "BIT"
      #not tested
     elif ("null" in jsontype): raise NotImplementedError("Can't set columns as null in MSSQL")
@@ -175,8 +176,8 @@ class MSSQLStream(Stream):
       self.cursor.fast_executemany = False
       self.cursor.executemany(dml, cache)
     except pyodbc.DatabaseError as e:
-      logging.error(f"Caught exception while running batch sql: {dml}. ")
-      logging.debug(f"Caught exception while running batch sql: {dml}. Parameters for batch: {cache} ")
+     # logging.error(f"Caught exception while running batch sql: {dml}. ")
+      logging.error(f"Caught exception while running batch sql: {dml}. Parameters for batch: {cache[0]} ")
       self.conn.rollback()
       raise e
     else:
