@@ -87,7 +87,7 @@ class MSSQLStream(Stream):
         sql+= f", `{name}` {mssqltype}"
 
     
-    sql += ");"
+    sql += " ROW_FORMAT=COMPRESSED ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4);"
     return sql
   
    #TODO what happens with multiple types
@@ -109,7 +109,7 @@ class MSSQLStream(Stream):
         elif(json_description == "blob"): mssqltype = f"VARBINARY(255)"
         elif(json_format == "date-time" and json_description == "date"): mssqltype = f"Date"
         elif(json_format == "date-time"): mssqltype = f"Datetime"
-        else: mssqltype = "VARCHAR(64)"
+        else: mssqltype = "VARCHAR(255)"
     elif ("number" in jsontype): mssqltype = "INT"
     elif ("number2" in jsontype):
         if (json_minimum and json_maximum and json_exclusive_minimum and json_exclusive_maximum and json_multiple_of):
@@ -193,7 +193,7 @@ class MSSQLStream(Stream):
               "Datetime2(7)" in name_ddltype_mapping.values() or
               "Datetime" in name_ddltype_mapping.values()  or
               "INT" in name_ddltype_mapping.values() or
-              "VARCHAR(64)" in name_ddltype_mapping.values()
+              "VARCHAR(255)" in name_ddltype_mapping.values()
       ):
           for name, ddl in name_ddltype_mapping.items():
               if ddl=="VARBINARY(max)":
@@ -223,10 +223,10 @@ class MSSQLStream(Stream):
                  val = record.get(name)
                  if (val is not None):
                      record.update({name:int(val)})
-              elif ddl == "VARCHAR(64)":
+              elif ddl == "VARCHAR(255)":
                   val = record.get(name)
                   if (val is not None):
-                      record.update({name: val[:64]})
+                      record.update({name: val[:255]})
       return newrecord
 
   #Not actually persisting the record yet, batching
