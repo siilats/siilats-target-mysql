@@ -106,10 +106,10 @@ class MSSQLStream(Stream):
     mssqltype : str = None
     if ("string" in jsontype): 
         if(json_max_length and json_max_length < 8000 and json_description != "blob"): mssqltype = f"VARCHAR({json_max_length})" 
-        elif(json_description == "blob"): mssqltype = f"VARBINARY(1000)"
+        elif(json_description == "blob"): mssqltype = f"VARBINARY(255)"
         elif(json_format == "date-time" and json_description == "date"): mssqltype = f"Date"
         elif(json_format == "date-time"): mssqltype = f"Datetime"
-        else: mssqltype = "VARCHAR(1000)"
+        else: mssqltype = "VARCHAR(255)"
     elif ("number" in jsontype): 
         if (json_minimum and json_maximum and json_exclusive_minimum and json_exclusive_maximum and json_multiple_of):
             #https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql?view=sql-server-ver15
