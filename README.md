@@ -27,8 +27,7 @@ I only have it tested for mariadb on mac
    
    ```
    b.  manual download
-   * https://downloads.mariadb.org/connector-odbc/
-   * https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.13/mariadb-connector-odbc-3.1.13-osx-x86_64.pkg
+:   * https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.13/mariadb-connector-odbc-3.1.13-osx-x86_64.pkg
    * https://mariadb.com/kb/en/creating-a-data-source-with-mariadb-connectorodbc/#creating-a-data-source-with-mariadb-connectorodbc-on-mac-os-x
    * http://www.iodbc.org/dataspace/doc/iodbc/wiki/iodbcWiki/Downloads#Mac%20OS%20X
    * Dont download the obvious:
