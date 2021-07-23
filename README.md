@@ -1,13 +1,15 @@
 # target-mysql
 
-`target-mysql` is a Singer tap for MySQL based on the code from MSSQL target and ODBC.
-I only have it tested for mariadb on mac
-1. brew install mariadb
-2. brew services list
-3. brew start mariadb
-4. recommend changing root password to root (empty pw is not supported well)
-5. recommend testing your connection in pycharm
-   if the connection doesn't start (mac):  
+`target-mysql` is a Singer tap for MySQL based on the code from MSSQL target and ODBC. It should work for other ODBC targets that have a driver.  
+See here for list https://github.com/davidski/database_connections
+
+Installation instructions on Mac:
+1. `brew install mariadb`
+2. `brew services list`
+3. `brew start mariadb`
+4. recommend changing root password (i.e. to 'root') (empty pw is not supported well)
+5. recommend testing your connection (i.e. in PyCharm)
+   if the connection doesn't start then Mac troubleshooting:  
    ```
    more ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist 
    cd /usr/local/var/mysql
@@ -17,9 +19,12 @@ I only have it tested for mariadb on mac
    sudo pkill mysql
    ```
 6. Download  
-   a. with brew: https://github.com/davidski/database_connections  
+   a. with brew: 
    ```
    brew install mariadb-connector-odbc --force
+   ```
+   add Driver:
+   ```
    vi /usr/local/etc/odbcinst.ini
    
    [MariaSQL]
@@ -30,10 +35,11 @@ I only have it tested for mariadb on mac
 :   * https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.13/mariadb-connector-odbc-3.1.13-osx-x86_64.pkg
    * https://mariadb.com/kb/en/creating-a-data-source-with-mariadb-connectorodbc/#creating-a-data-source-with-mariadb-connectorodbc-on-mac-os-x
    * http://www.iodbc.org/dataspace/doc/iodbc/wiki/iodbcWiki/Downloads#Mac%20OS%20X
-   * Dont download the obvious:
-https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-macOS11.dmg/download
-   * But download from github the latest:
-   * https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md  
+     * Dont download the obvious:
+       https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-macOS11.dmg/download
+     * But download from github the latest:
+     * https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md  
+   * Add Driver info: 
       `vi /Library/ODBC/odbc.ini`
      
         ```
@@ -84,6 +90,7 @@ https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-mac
 10. run
 `meltano elt tap-postgres target-mysql`
 
+## Here is previous Readme from target-mssql
 
 Build with the [Singer SDK](https://gitlab.com/meltano/singer-sdk).
 
