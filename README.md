@@ -33,40 +33,39 @@ I only have it tested for mariadb on mac
    * http://www.iodbc.org/dataspace/doc/iodbc/wiki/iodbcWiki/Downloads#Mac%20OS%20X
    * Dont download the obvious:
 https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-macOS11.dmg/download
-   * But download this one w the GUI:
-http://download3.openlinksw.com/uda/components/7.0/universal-apple-macosx10.7-32/mxkozzzz.dmg
+   * But download from github the latest:
+   * https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md  
+      `vi /Library/ODBC/odbc.ini`
+     
+        ```
+        [ODBC Data Sources]  
+        CData SSAS Sys = CData ODBC Driver for SQL Server Analysis Services   
+        MariaDB-server = MariaDB ODBC 3.1 Driver
+        ```
+        then add
+        ```
+        [MariaDB-server]
+        Description = MariaDB server
+        Driver = /Library/MariaDB/MariaDB-Connector-ODBC/libmaodbc.dylib
+        SERVER=localhost
+        USER=root
+        PASSWORD=root
+        DATABASE=mysql
+        PORT=3306
+        ```
+   * if everything works you should be able to run:  
+     `/usr/local/iODBC/bin/iodbctest "DSN=MariaDB-server"`
    * ODBC config is a mess, there are several .ini files with confusing names, driver names have 
    sometimes Unicode in them sometimes not, there are several dylib files that are not
-     in standard paths etc. Try this link https://snowflakecommunity.force.com/s/article/How-to-configure-Excel-on-MacOS-to-use-Snowflake-using-ODBC-driver
-     https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md
-     http://www.odbcmanager.net/
-     /usr/local/iODBC/bin/iodbctest "DSN=MariaDB-server"
-https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Mac-OSX
-     https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-MySQL
-  
-  
-https://towardsdatascience.com/using-odbc-to-connect-any-database-directly-to-jupyter-notebook-19741b4b748
-  
-   `vi /Library/ODBC/odbc.ini`
-     
-```
-[ODBC Data Sources]  
-CData SSAS Sys = CData ODBC Driver for SQL Server Analysis Services   
-MariaDB-server = MariaDB ODBC 3.1 Driver
-```
-then add
-```
-[MariaDB-server]
-Description = MariaDB server
-Driver = /Library/MariaDB/MariaDB-Connector-ODBC/libmaodbc.dylib
-SERVER=localhost
-USER=root
-PASSWORD=root
-DATABASE=mysql
-PORT=3306
-```
-7. Start iodbc gui go under system dsn make sure you can test connect
-8. clone `target-mysql` to a local folder and 
+     in standard paths etc. Try these links
+     * https://snowflakecommunity.force.com/s/article/How-to-configure-Excel-on-MacOS-to-use-Snowflake-using-ODBC-driver
+     * https://github.com/openlink/iODBC/blob/develop/README_MACOSX.md
+     * http://www.odbcmanager.net/
+     * https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Mac-OSX
+     * https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-MySQL
+     * https://towardsdatascience.com/using-odbc-to-connect-any-database-directly-to-jupyter-notebook-19741b4b748
+    
+7. clone `target-mysql` to a local folder and 
    add this to meltano.yml (or install from github and edit target)
 ```
   - name: target-mysql
@@ -80,10 +79,10 @@ PORT=3306
       user: root
       password: root
 ```
-9. run
+8. run
 `meltano add --custom loader target-mysql`
-10. configure tap-posgres or another tap
-11. run
+9. configure tap-posgres or another tap
+10. run
 `meltano elt tap-postgres target-mysql`
 
 
