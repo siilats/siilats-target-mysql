@@ -4,10 +4,10 @@
 See here for list https://github.com/davidski/database_connections
 
 Installation instructions on Mac:
-1. brew install mariadb
-2. brew services list
-3. brew start mariadb
-4. recommend changing root password to root (empty pw is not supported well)
+1. `brew install mariadb`
+2. `brew services list`
+3. `brew start mariadb`
+4. recommend changing root password (i.e. to 'root') (empty pw is not supported well)
 5. recommend testing your connection (i.e. in PyCharm)
    if the connection doesn't start then Mac troubleshooting:  
    ```
@@ -22,6 +22,9 @@ Installation instructions on Mac:
    a. with brew: 
    ```
    brew install mariadb-connector-odbc --force
+   ```
+   add Driver:
+   ```
    vi /usr/local/etc/odbcinst.ini
    
    [MariaSQL]
