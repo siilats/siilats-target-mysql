@@ -109,7 +109,7 @@ class MSSQLStream(Stream):
         elif(json_description == "blob"): mssqltype = f"VARBINARY(255)"
         elif(json_format == "date-time" and json_description == "date"): mssqltype = f"Date"
         elif(json_format == "date-time"): mssqltype = f"Datetime"
-        else: mssqltype = "VARCHAR(255)"
+        else: mssqltype = "VARCHAR(64)"
     elif ("number" in jsontype): mssqltype = "INT"
     elif ("number2" in jsontype):
         if (json_minimum and json_maximum and json_exclusive_minimum and json_exclusive_maximum and json_multiple_of):
@@ -188,7 +188,13 @@ class MSSQLStream(Stream):
         
   def data_conversion(self, name_ddltype_mapping, record):
       newrecord = record
-      if ("VARBINARY(max)" in name_ddltype_mapping.values() or "Date" in name_ddltype_mapping.values() or "Datetime2(7)" in name_ddltype_mapping.values()): 
+      if ("VARBINARY(max)" in name_ddltype_mapping.values() or
+              "Date" in name_ddltype_mapping.values() or
+              "Datetime2(7)" in name_ddltype_mapping.values() or
+              "Datetime" in name_ddltype_mapping.values()  or
+              "INT" in name_ddltype_mapping.values() or
+              "VARCHAR(64)" in name_ddltype_mapping.values()
+      ):
           for name, ddl in name_ddltype_mapping.items():
               if ddl=="VARBINARY(max)":
                   b64decode = None
@@ -201,18 +207,26 @@ class MSSQLStream(Stream):
                   #Example I used was a png, you'll need to determine type
                   record.update({name:b64decode})
               #https://gitlab.com/meltano/sdk/-/blob/main/singer_sdk/helpers/_typing.py#L179 looks to be a much better implementation, https://gitlab.com/autoidm/autoidm-target-mssql/-/issues/39 is in to migrate.
-              if ddl=="Date":
+              elif ddl=="Date":
                  date = record.get(name)
                  if (date is not None): 
                     transformed_date = dateutil.parser.isoparse(date)
                     newdate = transformed_date.strftime("%Y-%m-%d")
                     record.update({name:newdate})
-              if ddl=="Datetime2(7)":
+              elif ddl=="Datetime2(7)" or ddl=="Datetime":
                  date = record.get(name)
                  if (date is not None): 
                      transformed_date = dateutil.parser.isoparse(date)
                      newdate = transformed_date.strftime("%Y-%m-%d %H:%M:%S.%f")
                      record.update({name:newdate})
+              elif ddl=="INT":
+                 val = record.get(name)
+                 if (val is not None):
+                     record.update({name:int(val)})
+              elif ddl == "VARCHAR(64)":
+                  val = record.get(name)
+                  if (val is not None):
+                      record.update({name: val[:64]})
       return newrecord
 
   #Not actually persisting the record yet, batching
