@@ -7,7 +7,26 @@ I only have it tested for mariadb on mac
 3. brew start mariadb
 4. recommend changing root password to root (empty pw is not supported well)
 5. recommend testing your connection in pycharm
-6. Download 
+   if the connection doesn't start (mac):  
+   ```
+   more ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist 
+   cd /usr/local/var/mysql
+   ls -la
+   tail -1000 *-MacBook-Pro.local.err
+   ps axw|grep mysql
+   sudo pkill mysql
+   ```
+6. Download  
+   a. with brew: https://github.com/davidski/database_connections  
+   ```
+   brew install mariadb-connector-odbc --force
+   vi /usr/local/etc/odbcinst.ini
+   
+   [MariaSQL]
+   Driver = /usr/local/Cellar/mariadb-connector-odbc/3.1.13/lib/mariadb/libmaodbc.dylib
+   
+   ```
+   b.  manual download
    * https://downloads.mariadb.org/connector-odbc/
    * https://downloads.mariadb.com/Connectors/odbc/connector-odbc-3.1.13/mariadb-connector-odbc-3.1.13-osx-x86_64.pkg
    * https://mariadb.com/kb/en/creating-a-data-source-with-mariadb-connectorodbc/#creating-a-data-source-with-mariadb-connectorodbc-on-mac-os-x
@@ -25,7 +44,7 @@ http://download3.openlinksw.com/uda/components/7.0/universal-apple-macosx10.7-32
 https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-SQL-Server-from-Mac-OSX
      https://github.com/mkleehammer/pyodbc/wiki/Connecting-to-MySQL
   
-  https://github.com/davidski/database_connections
+  
 https://towardsdatascience.com/using-odbc-to-connect-any-database-directly-to-jupyter-notebook-19741b4b748
   
    `vi /Library/ODBC/odbc.ini`

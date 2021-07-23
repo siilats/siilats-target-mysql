@@ -3,7 +3,7 @@
 import datetime
 import pytest
 #from singer_sdk.testing import get_standard_tap_tests
-from target_mssql.target import TargetMSSQL
+from target_mysql.target import TargetMSSQL
 
 #Config from Docker File Setup
 SAMPLE_CONFIG = {
