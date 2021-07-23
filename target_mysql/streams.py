@@ -118,8 +118,10 @@ class MSSQLStream(Stream):
             
             max_digits_left_of_decimal = math.log10(json_maximum) 
             max_digits_right_of_decimal = -1*math.log10(json_multiple_of)
-            percision : int = int(max_digits_left_of_decimal + max_digits_right_of_decimal)
-            scale : int = int(max_digits_right_of_decimal)
+            #percision : int = int(max_digits_left_of_decimal + max_digits_right_of_decimal)
+            #scale : int = int(max_digits_right_of_decimal)
+            percision : int = int(10)
+            scale : int = int(10)
             mssqltype = f"NUMERIC({percision},{scale})"
         else: 
             mssqltype = "NUMERIC(19,6)" 
