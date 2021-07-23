@@ -75,7 +75,7 @@ https://sourceforge.net/projects/iodbc/files/iodbc/3.52.15/iODBC-SDK-3.52.15-mac
     config:
       host: localhost
       port: 3306
-      database: face
+      database: test
       user: root
       password: root
 ```
