@@ -87,7 +87,7 @@ class MSSQLStream(Stream):
         sql+= f", `{name}` {mssqltype}"
 
     
-    sql += ") ROW_FORMAT=COMPRESSED ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;"
+    sql += ") ENGINE=InnoDB ROW_FORMAT=COMPRESSED ;"
     return sql
   
    #TODO what happens with multiple types
