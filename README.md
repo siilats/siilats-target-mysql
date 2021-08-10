@@ -75,7 +75,7 @@ Installation instructions on Mac:
 ```
   - name: target-mysql
     namespace: target_mysql
-    pip_url: ../autoidm-target-mssql
+    pip_url: ../siilats-target-mysql
     executable: target-mssql
     config:
       host: localhost
